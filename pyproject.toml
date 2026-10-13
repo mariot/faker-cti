@@ -31,9 +31,9 @@ classifiers = [
 dependencies = ["faker>=20.0"]
 
 [project.urls]
-Homepage = "https://github.com/FiligranHQ/faker-cti"
-Repository = "https://github.com/FiligranHQ/faker-cti"
-Issues = "https://github.com/FiligranHQ/faker-cti/issues"
+Homepage = "https://github.com/mariot/faker-cti"
+Repository = "https://github.com/mariot/faker-cti"
+Issues = "https://github.com/mariot/faker-cti/issues"
 
 [dependency-groups]
 dev = [
