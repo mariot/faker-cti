@@ -86,7 +86,7 @@ Each provider includes the ones before it:
 | `stix_kill_chain_phase()` / `stix_external_reference(source_name=None)` | |
 | `stix_observable_value(stix_type)` / `stix_observable(stix_type=None, value=None, **extra)` | `ipv4-addr`, `ipv6-addr`, `domain-name`, `url`, `email-addr`, `mac-addr`, `hostname`, `file`, `autonomous-system`, `mutex` |
 | `stix_pattern(stix_type=None, value=None)` | `[ipv4-addr:value = '…']`, `[file:hashes.'SHA-256' = '…']` |
-| `stix_indicator(...)`, `stix_relationship(source_ref, target_ref, relationship_type)` | |
+| `stix_indicator(...)`, `stix_relationship(source_ref, target_ref, relationship_type, start_time, stop_time)` | all optional; the id is derived from them (pycti rules) |
 | `stix_attack_pattern(technique_id)`, `stix_malware(name)`, `stix_tool(name)`, `stix_intrusion_set(name)`, `stix_threat_actor(name)`, `stix_vulnerability(name)`, `stix_identity(name, identity_class)`, `stix_location(country_code)`, `stix_report(object_refs, name)` | SDOs with pycti-compatible ids |
 | `stix_bundle(objects=None)` | |
 
