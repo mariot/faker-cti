@@ -264,28 +264,43 @@ class StixProvider(ThreatIntelProvider):
         source_ref: str | None = None,
         target_ref: str | None = None,
         relationship_type: str | None = None,
+        start_time: str | None = None,
+        stop_time: str | None = None,
         **extra: Any,
     ) -> dict[str, Any]:
-        """``relationship`` SRO, id computed like pycti ``StixCoreRelationship.generate_id``."""
+        """``relationship`` SRO, id computed like pycti ``StixCoreRelationship.generate_id``.
+
+        Unset refs default to a random ``indicator--`` source and ``malware--`` target.
+        ``start_time`` (and ``stop_time``, only when ``start_time`` is set) contribute to
+        the id, as in pycti.
+        """
         created = self.stix_timestamp()
         relationship_type = relationship_type or self.stix_relationship_type()
         source_ref = source_ref or self.stix_id("indicator")
         target_ref = target_ref or self.stix_id("malware")
+        contributing = {
+            "relationship_type": relationship_type,
+            "source_ref": source_ref,
+            "target_ref": target_ref,
+        }
+        if start_time is not None:
+            contributing["start_time"] = start_time
+            if stop_time is not None:
+                contributing["stop_time"] = stop_time
         relationship = {
             "type": "relationship",
             "spec_version": "2.1",
-            "id": self.stix_id(
-                "relationship",
-                relationship_type=relationship_type,
-                source_ref=source_ref,
-                target_ref=target_ref,
-            ),
+            "id": self.stix_id("relationship", **contributing),
             "created": created,
             "modified": created,
             "relationship_type": relationship_type,
             "source_ref": source_ref,
             "target_ref": target_ref,
         }
+        if start_time is not None:
+            relationship["start_time"] = start_time
+        if stop_time is not None:
+            relationship["stop_time"] = stop_time
         relationship.update(extra)
         return relationship
 

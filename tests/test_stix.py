@@ -250,7 +250,38 @@ def test_ids_match_pycti(fake):
     assert relationship["id"] == pycti.StixCoreRelationship.generate_id(
         "uses", "malware--a", "intrusion-set--b"
     )
+    start, stop = "2024-01-01T00:00:00.000Z", "2024-02-01T00:00:00.000Z"
+    for kwargs in (
+        {"start_time": start},
+        {"start_time": start, "stop_time": stop},
+        {"stop_time": stop},
+    ):
+        relationship = fake.stix_relationship("malware--a", "intrusion-set--b", "uses", **kwargs)
+        assert relationship["id"] == pycti.StixCoreRelationship.generate_id(
+            "uses", "malware--a", "intrusion-set--b", **kwargs
+        )
     for level in ("PAP:CLEAR", "PAP:GREEN", "PAP:AMBER", "PAP:RED"):
         assert fake.pap_marking_id(level) == pycti.MarkingDefinition.generate_id("PAP", level)
     for level in ("TLP:CLEAR", "TLP:GREEN", "TLP:AMBER", "TLP:AMBER+STRICT", "TLP:RED"):
         assert fake.tlp_marking_id(level) == pycti.MarkingDefinition.generate_id("TLP", level)
+
+
+def test_relationship_refs_drive_the_id(fake):
+    first = fake.stix_relationship("malware--a", "intrusion-set--b", "uses")
+    assert (first["source_ref"], first["target_ref"]) == ("malware--a", "intrusion-set--b")
+    assert first["id"] == fake.stix_relationship("malware--a", "intrusion-set--b", "uses")["id"]
+    assert first["id"] != fake.stix_relationship("malware--a", "intrusion-set--c", "uses")["id"]
+    timed = fake.stix_relationship(
+        "malware--a", "intrusion-set--b", "uses", start_time="2024-01-01T00:00:00.000Z"
+    )
+    assert timed["start_time"] == "2024-01-01T00:00:00.000Z"
+    assert timed["id"] != first["id"]
+    stix2.parse(
+        fake.stix_relationship(
+            fake.stix_id("malware"),
+            fake.stix_id("intrusion-set"),
+            "uses",
+            start_time="2024-01-01T00:00:00.000Z",
+            stop_time="2024-02-01T00:00:00.000Z",
+        )
+    )
